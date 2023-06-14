@@ -1,5 +1,9 @@
 package com.example.book.Activity;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,6 +11,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
@@ -14,17 +19,22 @@ import android.content.Intent;
 
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.book.Model.user.ModelUser;
 import com.example.book.MyApplication;
 import com.example.book.R;
@@ -47,6 +57,7 @@ import com.squareup.picasso.Picasso;
 
 
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class ProfileEditActivity extends AppCompatActivity {
@@ -114,10 +125,8 @@ public class ProfileEditActivity extends AppCompatActivity {
         binding.profileTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                CropImage.activity().setAspectRatio(1,1)
-//                        .setCropShape(CropImageView.CropShape.RECTANGLE)
-//                        .start(ProfileEditActivity.this);
-                showImagePickDialog();
+                showImagePickDialog();// dành cho compileSdk 32 trở xuống, trong build.gradle
+//                imageDialog();// dành cho compileSdk 33, trong build.gradle
             }
         });
 
@@ -309,21 +318,6 @@ public class ProfileEditActivity extends AppCompatActivity {
                     });
         }
     }
-//
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK){
-//            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-//            imageUri = result.getUri();
-//            binding.profileTv.setImageURI(imageUri);
-//
-//        } else {
-//            Toast.makeText(this, "Hình ảnh chưa có, tôi đưa bạn về màn hình chính và thử lại",Toast.LENGTH_SHORT).show();
-//            progressDialog.dismiss();
-//        }
-//    }
-
 
     //load tất cả những thông tin cần có của phần profile
     private void loadUserInfo() {
@@ -377,5 +371,147 @@ public class ProfileEditActivity extends AppCompatActivity {
 
 
     }
+
+    /*Đoạn code dành cho phần xử lý hình ảnh
+    * Nếu trong build.gradle của bạn compileSdk 33 thì dùng đoạn code bên dưới nha
+    * Còn nếu trong build.gradle của bạn từ compileSdk 32 trở xuống thì đóng đoạn code phía bên dưới lại*/
+//    private void imageDialog(){
+//        PopupMenu popupMenu = new PopupMenu(ProfileEditActivity.this,binding.profileTv);
+//        popupMenu.getMenu().add(Menu.NONE,1,1,"Camera");
+//        popupMenu.getMenu().add(Menu.NONE,2,2,"Gallery");
+//
+//        popupMenu.show();
+//
+//        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                int itemId = item.getItemId();
+//                if (itemId ==1){
+//                    Log.d(TAG, "onMenuItemClick: Mở camera, check camera");
+//                    if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.TIRAMISU){
+//                        requestCameraPemissions.launch(new String[]{Manifest.permission.CAMERA});
+//                    }else {
+//                        requestCameraPemissions.launch(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE});
+//                    }
+//                }
+//                else if (itemId==2){
+//                    Log.d(TAG, "onMenuItemClick: Mở storage, check storage");
+//                    if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.TIRAMISU){
+//                        pickFromGallery1();
+//                    }else {
+//                        requestStoragePemissions.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+//                    }
+//                }
+//                return false;
+//            }
+//        });
+//    }
+//    private ActivityResultLauncher<String[]> requestCameraPemissions = registerForActivityResult(
+//            new ActivityResultContracts.RequestMultiplePermissions(),
+//            new ActivityResultCallback<Map<String,Boolean>>(){
+//
+//                @Override
+//                public void onActivityResult(Map<String, Boolean> result) {
+//                    Log.d(TAG, "onActivityResult: "+result.toString());
+//                    boolean areAllGranted = true;
+//                    for (Boolean isGranted: result.values()){
+//                        areAllGranted = areAllGranted && isGranted;
+//                    }
+//                    if (areAllGranted){
+//                        Log.d(TAG, "onActivityResult: Tất cả quyền camera & storage");
+//                        pickFromCamera1();
+//                    }
+//                    else {
+//                        Log.d(TAG, "onActivityResult: Tất cả hoặc chỉ có một quyền");
+//                        Toast.makeText(ProfileEditActivity.this, "Quyền camera hoặc storage", Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//            }
+//    );
+//
+//    private ActivityResultLauncher<String> requestStoragePemissions = registerForActivityResult(
+//            new ActivityResultContracts.RequestPermission(),
+//            new ActivityResultCallback<Boolean>() {
+//                @Override
+//                public void onActivityResult(Boolean isGranted) {
+//                    if (isGranted){
+//                        pickFromGallery1();
+//                    }
+//                    else {
+//                        Toast.makeText(ProfileEditActivity.this, "Quyền Storage chưa cấp quyền", Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//            }
+//    );
+//
+//    private void pickFromGallery1() {
+//        Intent intent = new Intent(Intent.ACTION_PICK);
+//        intent.setType("image/*");
+//       galleryActivityResultLaucher.launch(intent);
+//    }
+//    private ActivityResultLauncher<Intent> galleryActivityResultLaucher = registerForActivityResult(
+//            new ActivityResultContracts.StartActivityForResult(),
+//            new ActivityResultCallback<ActivityResult>() {
+//                @Override
+//                public void onActivityResult(ActivityResult result) {
+//                    if (result.getResultCode() == Activity.RESULT_OK){
+//                        Log.d(TAG, "onActivityResult: Hình ảnh thư viện: "+image_uri);
+//                        Intent data = result.getData();
+//                        image_uri = data.getData();
+//                        try {
+//                            Glide.with(ProfileEditActivity.this)
+//                                    .load(image_uri)
+//                                    .placeholder(R.drawable.ic_person_gray)
+//                                    .into(binding.profileTv);
+//                        }catch (Exception e){
+//                            Log.d(TAG, "onActivityResult: "+e);
+//                            Toast.makeText(ProfileEditActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                    else {
+//                        Toast.makeText(ProfileEditActivity.this, "Hủy", Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//            }
+//    );
+//
+//
+//    private void pickFromCamera1() {
+//        ContentValues contentValues = new ContentValues();
+//        contentValues.put(MediaStore.Images.Media.TITLE, "Temp_Image Title");
+//        contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Temp_Image Description");
+//
+//        image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+//
+//        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        intent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
+//        cameraActivityResultLaucher.launch(intent);
+//
+//    }
+//    private ActivityResultLauncher<Intent> cameraActivityResultLaucher = registerForActivityResult(
+//            new ActivityResultContracts.StartActivityForResult(),
+//            new ActivityResultCallback<ActivityResult>() {
+//                @Override
+//                public void onActivityResult(ActivityResult result) {
+//                    if (result.getResultCode() == Activity.RESULT_OK){
+//                        Log.d(TAG, "onActivityResult: Hình ảnh: "+image_uri);
+//                        try {
+//                            Glide.with(ProfileEditActivity.this)
+//                                    .load(image_uri)
+//                                    .placeholder(R.drawable.ic_person_gray)
+//                                    .into(binding.profileTv);
+//                        }catch (Exception e){
+//                            Log.d(TAG, "onActivityResult: "+e);
+//                            Toast.makeText(ProfileEditActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                    else {
+//                        Toast.makeText(ProfileEditActivity.this, "Hủy", Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//            }
+//    );
+
+
 
 }

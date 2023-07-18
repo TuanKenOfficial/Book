@@ -5,9 +5,12 @@
         android:icon="@drawable/ic_home"
         android:title="Trang chủ"/>
     <item
-        android:id="@+id/nav_reads"
-        android:icon="@drawable/ic_category_gray"
-        android:title="Sách đọc"/>
-
+        android:id="@+id/nav_doc"
+        android:icon="@drawable/ic_text_to_speech"
+        android:title="File đọc văn bản"/>
+    <item
+        android:id="@+id/nav_thongtin"
+        android:icon="@drawable/ic_music"
+        android:title="Trang Music"/>
 
 </menu>

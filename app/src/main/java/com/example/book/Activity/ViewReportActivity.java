@@ -153,6 +153,7 @@ public class ViewReportActivity extends AppCompatActivity {
         });
     }
 
+    //load toàn bộ báo cáo nếu là tài khoản admin
     private void loadReportAdmin() {
         //init array list before adding data info it
         reportArrayList = new ArrayList<>();
@@ -181,6 +182,7 @@ public class ViewReportActivity extends AppCompatActivity {
     }
 
 
+    //load báo cáo tài khoản người dùng
     private void loadReport(String uid) {
         //init array list before adding data info it
         reportArrayList = new ArrayList<>();

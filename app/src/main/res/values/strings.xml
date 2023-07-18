@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Book App</string>
-    <string name="app_name1">Thiết kể bởi @Nguyễn Vĩ Khang-Android Developer </string>
+    <string name="app_name1">Thiết kể bởi @Nguyễn Vĩ Khang</string>
     <string name="login">Login</string>
     <string name="new_user_singup">Người dùng mới? Đăng ký</string>
     <string name="forgot_password">Quên mật khẩu?</string>
@@ -59,7 +59,7 @@
     <string name="read_books">Đọc văn bản bằng giọng nói</string>
     <string name="off">OFF</string>
     <string name="speak">Nói</string>
-    <string name="texttospeech">Nhập nội dung văn bản cần chuyển đổi thành giọng nói</string>
+    <string name="texttospeech">Lưu ý: Ở đây các bạn copy 1 đoạn văn bản bên ngoài hay các bạn lấy những file PDF sách các bạn đã upload, các bạn copy vào đây cho nó đọc và xuất file mp3 để nghe lại. Và khi các bạn muốn nghe lại file mp3 các bạn có thể vào mục profile có nút button mp3 để nghe lại. Xin cảm ơn các bạn</string>
     <string name="report">Báo cáo</string>
     <string name="huybook">Hủy</string>
     <string name="report1">Xem thông tin báo cáo</string>
@@ -89,10 +89,10 @@
     <string name="no_file">"Không có tập tin "</string>
     <string name="ten_file">Tên file</string>
     <string name="Music">File Đọc văn bản bằng giọng nói</string>
+    <string name="Music1">Bấm vào đây để chuyển sang trang File Đọc văn bản bằng giọng nói</string>
     <string name="all">Tất cả sách</string>
     <string name="collection">Tổng hợp sách</string>
     <string name="timkiem">Tìm kiếm trên app book</string>
-    <string name="ghichu">Lưu ý: Ở đây các bạn copy 1 đoạn văn bản bên ngoài các bạn chèn vô cho nó đọc và xuất file mp3 để nghe lại. Và khi các bạn muốn nghe lại file mp3 các bạn có thể vào mục profile có nút button mp3 để nghe lại. Xin cảm ơn các bạn</string>
     <string name="goiy">Gợi ý</string>
     <string name="timkiemsach">Tìm kiếm sách</string>
     <string name="tatca">Tất cả</string>
@@ -105,5 +105,6 @@
     <string name="reports_admin">Trang Quản lý báo cáo</string>
     <string name="notification">Thông báo</string>
     <string name="usertpye">Loại tài khoản</string>
+    <string name="chucnangdangphattrien">Chức năng đang nghiên cứu thêm và phát triển</string>
 
 </resources>

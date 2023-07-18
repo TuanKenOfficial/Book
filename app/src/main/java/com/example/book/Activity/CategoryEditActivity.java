@@ -89,34 +89,6 @@ public class CategoryEditActivity extends AppCompatActivity {
 
 
 
-//    private void loadBookInfo() {
-//        Log.d(TAG, "loadBookInfo: Đang tải thông tin sách");
-//        DatabaseReference refBook = FirebaseDatabase.getInstance().getReference("Categories");
-//        refBook.child(selectedCategoryId)
-//                .addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        //get book info
-//                        selectedCategoryId = ""+snapshot.child("categoryId").getValue();
-//                        String category = ""+snapshot.child("category").getValue();
-//                        String title = ""+snapshot.child("title").getValue();
-//                        String author = ""+snapshot.child("author").getValue();
-//                        String year = ""+snapshot.child("year").getValue();
-//                        String major = ""+snapshot.child("major").getValue();
-//
-//                        //set to views
-//                        binding.categoryEt.setText(category);
-//
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//
-//                    }
-//                });
-//    }
-
-
     private void validateData() {
         category = binding.categoryEt.getText().toString().trim();
 

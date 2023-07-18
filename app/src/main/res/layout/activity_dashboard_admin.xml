@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginStart="10dp"
+            android:layout_margin="5dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_person_white"/>
         <!--Button profile-->
@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginStart="10dp"
+            android:layout_margin="5dp"
             android:layout_toRightOf="@id/profileBtn"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_notifications"/>
@@ -60,7 +60,17 @@
             android:layout_centerVertical="true"
             android:src="@drawable/ic_text_to_speech"
             android:layout_toLeftOf="@id/btnLogout"
-            android:layout_marginEnd="10dp"
+            android:layout_margin="5dp"
+            android:background="@android:color/transparent"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnMusic"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_music"
+            android:layout_toLeftOf="@id/btnRead"
+            android:layout_margin="5dp"
             android:background="@android:color/transparent"/>
 
         <ImageButton
@@ -70,7 +80,7 @@
             android:layout_centerVertical="true"
             android:src="@drawable/ic_logout_white"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="10dp"
+            android:layout_margin="5dp"
             android:background="@android:color/transparent"/>
 
 

@@ -45,6 +45,7 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.Holder
     //instance of our filtter class
     private FilterCategory filter;
     private FirebaseAuth firebaseAuth;
+
     private static final String TAG = "ADAPTERCATEGORY";
 
     public AdapterCategory(Context context, ArrayList<ModelCategory> categoryArrayList) {

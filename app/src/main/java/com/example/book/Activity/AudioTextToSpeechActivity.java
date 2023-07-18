@@ -33,7 +33,6 @@ public class AudioTextToSpeechActivity extends AppCompatActivity {
     private ActivityAudioTextToSpeechBinding binding;
 
     public TextToSpeech textToSpeech;
-    private MediaPlayer mMediaPlayer;
 
     private static final String TAG = "SPEECH";
 
@@ -56,13 +55,13 @@ public class AudioTextToSpeechActivity extends AppCompatActivity {
 
 
             binding.backBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.d(TAG, "onClick: Đã thoát app");
-                    onBackPressed();
-                }
-            });
-            textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: Đã thoát app");
+                onBackPressed();
+            }
+        });
+        textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
                 @Override
                 public void onInit(int status) {
                     if (status != TextToSpeech.ERROR){
@@ -145,53 +144,11 @@ public class AudioTextToSpeechActivity extends AppCompatActivity {
                                 }
                             }
                         });
-//                    Log.d(TAG, "synthesize returns = " + music);
-//                    File fileTTS = new File(destFileName);
-//
-//                    if (fileTTS.exists()) {
-//                        Log.d(TAG, "Chuyển văn bản thành tệp âm thanh thành công fileTTS");
-//                    }
-//                    else {
-//                        Log.d(TAG, "Lỗi file đọc văn bản, ko chuyển thành âm thanh được fileTTS");
-//                    }
-//
-//                    fileUri = Uri.fromFile(fileTTS);
-//                    Log.d(TAG, "successfully created uri link: " + fileUri.getPath());
                 }
             }
             });
     }
 
-    private void shareTextOnly() {
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Share audio_text_to_speech");
-        intent.putExtra(Intent.EXTRA_TEXT,""+fileUri);
-        startActivity(Intent.createChooser(intent,"Chia sẻ qua"));
-    }
-
-
-    private Uri sharePDFAndText() {
-
-        File imageFolder = new File(this.getCacheDir(),"audio/");
-        try {
-            imageFolder.mkdirs();
-            File file = new File(imageFolder, ""+fileUri);
-
-            FileOutputStream stream = new FileOutputStream(file);
-            stream.flush();
-            stream.close();
-            fileUri = FileProvider.getUriForFile(AudioTextToSpeechActivity.this,"com.example.book.fileprovider",file);
-        }catch (Exception e){
-            Toast.makeText(this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
-        }
-        return fileUri;
-    }
-    private void fileCreate() {
-
-
-
-    }
 
     @Override
         protected void onPause() {

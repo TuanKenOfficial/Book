@@ -94,10 +94,10 @@ public class DashboardUserActivity extends AppCompatActivity {
             }
         });
         //handle click, text_to_speech
-        binding.btnRead.setOnClickListener(new View.OnClickListener() {
+        binding.btnMusic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(DashboardUserActivity.this, AudioTextToSpeechActivity.class));
+                startActivity(new Intent(DashboardUserActivity.this, MusicActivity.class));
             }
         });
 
@@ -124,7 +124,10 @@ public class DashboardUserActivity extends AppCompatActivity {
                         bottomNavigationView.getMenu().findItem(R.id.nav_home).setChecked(true);
                         break;
                     case 1:
-                        bottomNavigationView.getMenu().findItem(R.id.nav_reads).setChecked(true);
+                        bottomNavigationView.getMenu().findItem(R.id.nav_doc).setChecked(true);
+                        break;
+                    case 2:
+                        bottomNavigationView.getMenu().findItem(R.id.nav_thongtin).setChecked(true);
                         break;
 
                 }
@@ -143,9 +146,13 @@ public class DashboardUserActivity extends AppCompatActivity {
                     case R.id.nav_home:
                         viewPager.setCurrentItem(0);
                         break;
-                    case R.id.nav_reads:
+                    case R.id.nav_doc:
                         viewPager.setCurrentItem(1);
                         break;
+                    case R.id.nav_thongtin:
+                        viewPager.setCurrentItem(2);
+                        break;
+
 
                 }
                 return true;

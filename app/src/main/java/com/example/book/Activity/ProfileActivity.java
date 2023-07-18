@@ -76,6 +76,7 @@ public class ProfileActivity extends AppCompatActivity {
         //setup firebase user
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
+
         loadUserInfo();
         loadBookFavorite(); // load book favorite
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
@@ -92,14 +93,6 @@ public class ProfileActivity extends AppCompatActivity {
                          *nếu bạn là admin thì sẽ load hình profile admin
                          * và ngược lại nếu bạn là người dùng thì load hình profile người dùng
                          * và cuối cùng nếu bạn thay đổi ảnh profile của cả hai thì nó sẽ load hình thay đổi đó */
-
-                        if (userType.equals("admin")){
-                            binding.btnCall.setVisibility(View.GONE);
-                        }
-                        else {
-                            binding.btnCall.setVisibility(View.VISIBLE);
-                            binding.btnMusic.setVisibility(View.VISIBLE);
-                        }
 
                     }
 
@@ -140,19 +133,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         //handle click, gọi điện
-        binding.btnCall.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(ProfileActivity.this, CallActivity.class));
-            }
-        });
 
-        binding.btnMusic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(ProfileActivity.this, MusicActivity.class));
-            }
-        });
     }
 
     private void emailVerificationDialog() {
@@ -238,6 +219,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                         if (profileimage.isEmpty() && userType.equals("admin")){
                             binding.profileTv.setImageResource(R.drawable.admin);
+
                         }
                         else if (profileimage.isEmpty() && userType.equals("user")){
                             binding.profileTv.setImageResource(R.drawable.user);

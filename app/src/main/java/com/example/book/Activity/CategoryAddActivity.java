@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.book.Adapter.AdapterReport;
+import com.example.book.Model.report.ModelReport;
 import com.example.book.databinding.ActivityCategoryAddBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -34,11 +36,15 @@ public class CategoryAddActivity extends AppCompatActivity {
     //progress dialog
     private ProgressDialog progressDialog;
 
+
+
 //    private ArrayList<ModelCategory> categoryArrayList;
 
 
 
     private static final String TAG = "CATEGORY";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,9 +75,11 @@ public class CategoryAddActivity extends AppCompatActivity {
                 validateData();
             }
         });
+
     }
 
-    private String category = "";
+
+    private String categorys = "";
 
     //status
 //     private String status1 = "0";
@@ -80,44 +88,16 @@ public class CategoryAddActivity extends AppCompatActivity {
     private void validateData() {
 
         //get data
-        category = binding.edtCategory.getText().toString().trim();
-        if (TextUtils.isEmpty(category)){
+        categorys = binding.edtCategory.getText().toString().trim();
+        if (TextUtils.isEmpty(categorys)){
             Toast.makeText(this, "Vui lòng nhập danh mục sách...", Toast.LENGTH_SHORT).show();
         }
+
         else {
-            ktAddCategoryFirebase();
+            addCategoryFirebase();
         }
     }
 
-    private void ktAddCategoryFirebase() {
-        progressDialog.setMessage("Kiểm tra danh mục");
-        progressDialog.show();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Categories");
-        reference.orderByChild("category").equalTo(category)
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()){
-                            progressDialog.dismiss();
-                            Toast.makeText(CategoryAddActivity.this, "Danh mục đã có hay chưa có, " +
-                                    "nếu đã có thì tạm dừng, còn chưa có thì sẽ xuống bước kế tiếp " +
-                                    "và tạo danh mục mới cho bạn và đưa bạn về trang admin", Toast.LENGTH_LONG).show();
-                        }
-                        else {
-                            addCategoryFirebase();
-                        }
-
-
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-
-    }
 
 
 
@@ -134,11 +114,12 @@ public class CategoryAddActivity extends AppCompatActivity {
 
         //setup upload database
         HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("id", "" +id);
-        hashMap.put("category", "" + category);
+        hashMap.put("id", ""+id);
+        hashMap.put("category", "" +categorys);
         hashMap.put("timestamp", timestamp);
-        hashMap.put("uid", "" + firebaseAuth.getUid());
+        hashMap.put("uid", "" +firebaseAuth.getUid());
 //        hashMap.put("status", status);//status
+
 
         //Đưa lên database.... Database Root > Categories > catogoryId > category info
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
@@ -148,9 +129,9 @@ public class CategoryAddActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Void unused) {
                         //success
-                        Log.d(TAG, "onSuccess: Upload thành công: "+category);
+                        Log.d(TAG, "onSuccess: Upload thành công: "+categorys);
                         progressDialog.dismiss();
-                        Toast.makeText(CategoryAddActivity.this, "Danh mục: "+category+ " upload thành công", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CategoryAddActivity.this, "Danh mục: "+categorys+ " upload thành công", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(CategoryAddActivity.this, DashboardAdminActivity.class));
 
                     }
@@ -166,6 +147,5 @@ public class CategoryAddActivity extends AppCompatActivity {
                 });
 
     }
-
 
 }

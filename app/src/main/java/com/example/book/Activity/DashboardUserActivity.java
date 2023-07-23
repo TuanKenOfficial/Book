@@ -71,7 +71,7 @@ public class DashboardUserActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         checkUser();
-
+        loadPdfUser();
         viewPager = binding.viewpager;
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         viewPager.setAdapter(adapter);
@@ -126,9 +126,6 @@ public class DashboardUserActivity extends AppCompatActivity {
                     case 1:
                         bottomNavigationView.getMenu().findItem(R.id.nav_doc).setChecked(true);
                         break;
-                    case 2:
-                        bottomNavigationView.getMenu().findItem(R.id.nav_thongtin).setChecked(true);
-                        break;
 
                 }
 
@@ -149,17 +146,13 @@ public class DashboardUserActivity extends AppCompatActivity {
                     case R.id.nav_doc:
                         viewPager.setCurrentItem(1);
                         break;
-                    case R.id.nav_thongtin:
-                        viewPager.setCurrentItem(2);
-                        break;
-
 
                 }
                 return true;
             }
         });
 
-        loadPdfUser();
+
 
     }
 

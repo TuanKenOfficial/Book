@@ -6,7 +6,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.example.book.Fragment.HomeFragment;
-import com.example.book.Fragment.InformationFragment;
 import com.example.book.Fragment.AudioTextToSpeechFragment;
 
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
@@ -23,8 +22,6 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
                 return new HomeFragment();
             case 1:
                 return new AudioTextToSpeechFragment();
-            case 2:
-                return new InformationFragment();
             default:
                 return new HomeFragment();
         }
@@ -33,6 +30,6 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return 2;
     }
 }

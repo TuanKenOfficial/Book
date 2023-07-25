@@ -56,7 +56,7 @@
             android:drawableStart="@drawable/ic_category_gray"
             android:drawablePadding="10dp"
             android:hint="Tiêu đề thể loại sách"
-            android:inputType="textPersonName|textCapWords"
+            android:inputType="textMultiLine|textPersonName"
             android:padding="10dp"
             android:textColor="@color/black"
             android:textColorHint="@color/gray01"/>

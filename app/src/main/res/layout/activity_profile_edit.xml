@@ -70,7 +70,7 @@
                 android:drawableStart="@drawable/ic_person_gray"
                 android:drawablePadding="10dp"
                 android:inputType="textPersonName|textCapWords"
-                android:hint="TÃªn"
+                android:hint="Họ và tên - tên"
                 android:textColor="@color/black"
                 android:textColorHint="@color/gray01"/>
 

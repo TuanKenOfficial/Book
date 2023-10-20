@@ -40,7 +40,7 @@ import java.util.Locale;
 
 
 public class MyApplication extends Application {
-    public static  final  String TAG_DOWNLOAD ="DOWNLOAD_TAG";
+    public static  final  String TAG_DOWNLOAD ="MY";
 
     @Override
     public void onCreate() {

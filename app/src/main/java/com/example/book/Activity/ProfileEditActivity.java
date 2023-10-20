@@ -84,6 +84,7 @@ public class ProfileEditActivity extends AppCompatActivity {
     //image pick constants
     private static final int IMAGE_PICK_GALLERY_CODE = 400;
     private static final int IMAGE_PICK_CAMERA_CODE = 500;
+    private static final int TIRAMISU = 33;
     private String[] cameraPermissions;
     private String[] storagePermissions;
     //image picked uri
@@ -129,8 +130,8 @@ public class ProfileEditActivity extends AppCompatActivity {
         binding.profileTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                showImagePickDialog();// dành cho compileSdk 32 trở xuống, trong build.gradle
-                imageDialog();// dành cho compileSdk 33, trong build.gradle
+                showImagePickDialog();// dành cho compileSdk 32 trở xuống, trong build.gradle
+//                imageDialog();// dành cho compileSdk 33, trong build.gradle
             }
         });
 
@@ -141,7 +142,8 @@ public class ProfileEditActivity extends AppCompatActivity {
                 /*Trường hợp này giải thích như sau:
             * Hình ảnh profile mặc định theo tài khoản đã có hình sẵn
             * Nên ở đây chúng ta không đặt điều kiện khi nó bằng null
-            * Chỉ đặt điều kiện = null thì nó sẽ câu if bên dưới khi chúng ta có cập nhật lại tên thì chỉ đổi tên thôi.
+            * Chỉ đặt điều kiện = null thì nó sẽ câu if bên dưới khi chúng ta có cập nhật lại tên
+            *  thì chỉ đổi tên thôi.
             * Ngược lại nếu thay đổi hình ko thay đổi tên thì tên vẫn giữ nguyên và đi qua else
             * Và cuối cùng nếu đổi cả 2 thì nó đi qua else*/
                 if (image_uri == null){
@@ -157,7 +159,13 @@ public class ProfileEditActivity extends AppCompatActivity {
         });
     }
 
-    //Image profile dành cho compileSdk 32 trở xuống, trong build.gradle
+    /*Nếu không dùng cái này, ma dùng compileSdk 33 trong build.gradle thì se bị lỗi chức năng dowload book
+        *NÊn phải compileSdk 32 trong build.gradle để dùng được chuc nang download book này
+        * Với lai mình code thêm phần chỉnh sửa ảnh profile dành cho compileSdk 33 cho các bạn tham khảo thêm
+        * từ dòng 387 - 518 nha mình dùng TIMASU á
+        * Mình đã ghi chú thật kĩ các bạn đọc kĩ dùm mình nhá
+
+    */
     private void showImagePickDialog() {
         //options to display in dialog
         String[] options = {"Camera", "Gallery"};
@@ -190,12 +198,14 @@ public class ProfileEditActivity extends AppCompatActivity {
 
     }
 
+    //mở thư viện ảnh
     private void pickFromGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         startActivityForResult(intent, IMAGE_PICK_GALLERY_CODE);
     }
 
+    //mở camera
     private void pickFromCamera() {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MediaStore.Images.Media.TITLE, "Temp_Image Title");
@@ -207,7 +217,7 @@ public class ProfileEditActivity extends AppCompatActivity {
         intent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
         startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE);
     }
-    //image profile
+    //image profile check quyền thư viện và camera
     private boolean checkStoragePermission(){
 
         return ContextCompat.checkSelfPermission(this,
@@ -225,14 +235,14 @@ public class ProfileEditActivity extends AppCompatActivity {
 
         return result && result1;
     }
-    //image profile
+    //image profile quyền thư viện và camare
     private void requestStoragePermission(){
         ActivityCompat.requestPermissions(this, storagePermissions, STORAGE_REQUEST_CODE);
     }
     private void requestCameraPermission(){
         ActivityCompat.requestPermissions(this, cameraPermissions, CAMERA_REQUEST_CODE);
     }
-    //image profile
+    //image profile xử lý ảnh
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (resultCode==RESULT_OK){
@@ -314,7 +324,6 @@ public class ProfileEditActivity extends AppCompatActivity {
                                         progressDialog.dismiss();
                                         Log.d(TAG, "updateAnh: Failed");
                                         Toast.makeText(ProfileEditActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-                                        startActivity(new Intent(ProfileEditActivity.this, ProfileActivity.class));
                                         finish();
                                     });
 
@@ -379,142 +388,142 @@ public class ProfileEditActivity extends AppCompatActivity {
     /*Đoạn code dành cho phần xử lý hình ảnh
     * Nếu trong build.gradle của bạn compileSdk 33 thì dùng đoạn code bên dưới nha
     * Còn nếu trong build.gradle của bạn từ compileSdk 32 trở xuống thì đóng đoạn code phía bên dưới lại*/
-    private void imageDialog(){
-        PopupMenu popupMenu = new PopupMenu(ProfileEditActivity.this,binding.profileTv);
-        popupMenu.getMenu().add(Menu.NONE,1,1,"Camera");
-        popupMenu.getMenu().add(Menu.NONE,2,2,"Gallery");
-
-        popupMenu.show();
-
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                int itemId = item.getItemId();
-                if (itemId ==1){
-                    Log.d(TAG, "onMenuItemClick: Mở camera, check camera");
-                    if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.TIRAMISU){
-                        requestCameraPemissions.launch(new String[]{Manifest.permission.CAMERA});
-                    }else {
-                        requestCameraPemissions.launch(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE});
-                    }
-                }
-                else if (itemId==2){
-                    Log.d(TAG, "onMenuItemClick: Mở storage, check storage");
-                    if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.TIRAMISU){
-                        pickFromGallery1();
-                    }else {
-                        requestStoragePemissions.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                    }
-                }
-                return false;
-            }
-        });
-    }
-    private ActivityResultLauncher<String[]> requestCameraPemissions = registerForActivityResult(
-            new ActivityResultContracts.RequestMultiplePermissions(),
-            new ActivityResultCallback<Map<String,Boolean>>(){
-
-                @Override
-                public void onActivityResult(Map<String, Boolean> result) {
-                    Log.d(TAG, "onActivityResult: "+result.toString());
-                    boolean areAllGranted = true;
-                    for (Boolean isGranted: result.values()){
-                        areAllGranted = areAllGranted && isGranted;
-                    }
-                    if (areAllGranted){
-                        Log.d(TAG, "onActivityResult: Tất cả quyền camera & storage");
-                        pickFromCamera1();
-                    }
-                    else {
-                        Log.d(TAG, "onActivityResult: Tất cả hoặc chỉ có một quyền");
-                        Toast.makeText(ProfileEditActivity.this, "Quyền camera hoặc storage", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-    );
-
-    private ActivityResultLauncher<String> requestStoragePemissions = registerForActivityResult(
-            new ActivityResultContracts.RequestPermission(),
-            new ActivityResultCallback<Boolean>() {
-                @Override
-                public void onActivityResult(Boolean isGranted) {
-                    if (isGranted){
-                        pickFromGallery1();
-                    }
-                    else {
-                        Toast.makeText(ProfileEditActivity.this, "Quyền Storage chưa cấp quyền", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-    );
-
-    private void pickFromGallery1() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-       galleryActivityResultLaucher.launch(intent);
-    }
-    private ActivityResultLauncher<Intent> galleryActivityResultLaucher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK){
-                        Log.d(TAG, "onActivityResult: Hình ảnh thư viện: "+image_uri);
-                        Intent data = result.getData();
-                        image_uri = data.getData();
-                        try {
-                            Glide.with(ProfileEditActivity.this)
-                                    .load(image_uri)
-                                    .placeholder(R.drawable.ic_person_gray)
-                                    .into(binding.profileTv);
-                        }catch (Exception e){
-                            Log.d(TAG, "onActivityResult: "+e);
-                            Toast.makeText(ProfileEditActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                    else {
-                        Toast.makeText(ProfileEditActivity.this, "Hủy", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-    );
-
-
-    private void pickFromCamera1() {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(MediaStore.Images.Media.TITLE, "Temp_Image Title");
-        contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Temp_Image Description");
-
-        image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
-        cameraActivityResultLaucher.launch(intent);
-
-    }
-    private ActivityResultLauncher<Intent> cameraActivityResultLaucher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK){
-                        Log.d(TAG, "onActivityResult: Hình ảnh: "+image_uri);
-                        try {
-                            Glide.with(ProfileEditActivity.this)
-                                    .load(image_uri)
-                                    .placeholder(R.drawable.ic_person_gray)
-                                    .into(binding.profileTv);
-                        }catch (Exception e){
-                            Log.d(TAG, "onActivityResult: "+e);
-                            Toast.makeText(ProfileEditActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                    else {
-                        Toast.makeText(ProfileEditActivity.this, "Hủy", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-    );
+//    private void imageDialog(){
+//        PopupMenu popupMenu = new PopupMenu(ProfileEditActivity.this,binding.profileTv);
+//        popupMenu.getMenu().add(Menu.NONE,1,1,"Camera");
+//        popupMenu.getMenu().add(Menu.NONE,2,2,"Gallery");
+//
+//        popupMenu.show();
+//
+//        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                int itemId = item.getItemId();
+//                if (itemId ==1){
+//                    Log.d(TAG, "onMenuItemClick: Mở camera, check camera");
+//                    if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.TIRAMISU){
+//                        requestCameraPemissions.launch(new String[]{Manifest.permission.CAMERA});
+//                    }else {
+//                        requestCameraPemissions.launch(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE});
+//                    }
+//                }
+//                else if (itemId==2){
+//                    Log.d(TAG, "onMenuItemClick: Mở storage, check storage");
+//                    if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.TIRAMISU){
+//                        pickFromGallery1();
+//                    }else {
+//                        requestStoragePemissions.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+//                    }
+//                }
+//                return false;
+//            }
+//        });
+//    }
+//    private ActivityResultLauncher<String[]> requestCameraPemissions = registerForActivityResult(
+//            new ActivityResultContracts.RequestMultiplePermissions(),
+//            new ActivityResultCallback<Map<String,Boolean>>(){
+//
+//                @Override
+//                public void onActivityResult(Map<String, Boolean> result) {
+//                    Log.d(TAG, "onActivityResult: "+result.toString());
+//                    boolean areAllGranted = true;
+//                    for (Boolean isGranted: result.values()){
+//                        areAllGranted = areAllGranted && isGranted;
+//                    }
+//                    if (areAllGranted){
+//                        Log.d(TAG, "onActivityResult: Tất cả quyền camera & storage");
+//                        pickFromCamera1();
+//                    }
+//                    else {
+//                        Log.d(TAG, "onActivityResult: Tất cả hoặc chỉ có một quyền");
+//                        Toast.makeText(ProfileEditActivity.this, "Quyền camera hoặc storage", Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//            }
+//    );
+//
+//    private ActivityResultLauncher<String> requestStoragePemissions = registerForActivityResult(
+//            new ActivityResultContracts.RequestPermission(),
+//            new ActivityResultCallback<Boolean>() {
+//                @Override
+//                public void onActivityResult(Boolean isGranted) {
+//                    if (isGranted){
+//                        pickFromGallery1();
+//                    }
+//                    else {
+//                        Toast.makeText(ProfileEditActivity.this, "Quyền Storage chưa cấp quyền", Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//            }
+//    );
+//
+//    private void pickFromGallery1() {
+//        Intent intent = new Intent(Intent.ACTION_PICK);
+//        intent.setType("image/*");
+//       galleryActivityResultLaucher.launch(intent);
+//    }
+//    private ActivityResultLauncher<Intent> galleryActivityResultLaucher = registerForActivityResult(
+//            new ActivityResultContracts.StartActivityForResult(),
+//            new ActivityResultCallback<ActivityResult>() {
+//                @Override
+//                public void onActivityResult(ActivityResult result) {
+//                    if (result.getResultCode() == Activity.RESULT_OK){
+//                        Log.d(TAG, "onActivityResult: Hình ảnh thư viện: "+image_uri);
+//                        Intent data = result.getData();
+//                        image_uri = data.getData();
+//                        try {
+//                            Glide.with(ProfileEditActivity.this)
+//                                    .load(image_uri)
+//                                    .placeholder(R.drawable.ic_person_gray)
+//                                    .into(binding.profileTv);
+//                        }catch (Exception e){
+//                            Log.d(TAG, "onActivityResult: "+e);
+//                            Toast.makeText(ProfileEditActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                    else {
+//                        Toast.makeText(ProfileEditActivity.this, "Hủy", Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//            }
+//    );
+//
+//
+//    private void pickFromCamera1() {
+//        ContentValues contentValues = new ContentValues();
+//        contentValues.put(MediaStore.Images.Media.TITLE, "Temp_Image Title");
+//        contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Temp_Image Description");
+//
+//        image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+//
+//        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        intent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
+//        cameraActivityResultLaucher.launch(intent);
+//
+//    }
+//    private ActivityResultLauncher<Intent> cameraActivityResultLaucher = registerForActivityResult(
+//            new ActivityResultContracts.StartActivityForResult(),
+//            new ActivityResultCallback<ActivityResult>() {
+//                @Override
+//                public void onActivityResult(ActivityResult result) {
+//                    if (result.getResultCode() == Activity.RESULT_OK){
+//                        Log.d(TAG, "onActivityResult: Hình ảnh: "+image_uri);
+//                        try {
+//                            Glide.with(ProfileEditActivity.this)
+//                                    .load(image_uri)
+//                                    .placeholder(R.drawable.ic_person_gray)
+//                                    .into(binding.profileTv);
+//                        }catch (Exception e){
+//                            Log.d(TAG, "onActivityResult: "+e);
+//                            Toast.makeText(ProfileEditActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                    else {
+//                        Toast.makeText(ProfileEditActivity.this, "Hủy", Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//            }
+//    );
 
 
 

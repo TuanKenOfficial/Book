@@ -36,22 +36,13 @@
             android:name=".Activity.CategoryUserActivity"
             android:exported="false" />
         <activity
-            android:name=".Activity.MusicPlayerActivity"
-            android:exported="false" />
-        <activity
             android:name=".Activity.AudioTextToSpeechActivity"
             android:exported="false" />
         <activity
             android:name=".Activity.ViewReportActivity"
             android:exported="false" />
         <activity
-            android:name=".Activity.CallActivity"
-            android:exported="false" />
-        <activity
             android:name=".Activity.ReportActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Activity.MusicActivity"
             android:exported="false" />
         <activity
             android:name=".Activity.ProfileEditActivity"

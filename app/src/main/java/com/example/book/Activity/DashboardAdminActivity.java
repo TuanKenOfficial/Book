@@ -105,13 +105,6 @@ public class DashboardAdminActivity extends AppCompatActivity {
             }
         });
 
-        //handle click, file doc
-        binding.btnMusic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(DashboardAdminActivity.this, MusicActivity.class));
-            }
-        });
 
         //handle click, thông báo
         binding.notificationBtn.setOnClickListener(new View.OnClickListener() {

@@ -58,7 +58,6 @@ public class DashboardUserActivity extends AppCompatActivity {
 
     private RelativeLayout rv1,rv2,rv3;
 
-    private Toolbar toolbar;
 
 
     @Override

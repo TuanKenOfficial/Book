@@ -109,43 +109,44 @@ public class AudioTextToSpeechActivity extends AppCompatActivity {
             binding.btnMP3.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String toSpeak = binding.textEt.getText().toString().trim();
-//                    textToSpeech.speak(toSpeak,TextToSpeech.QUEUE_FLUSH, null);
+                    /*Chức năng xuất ra file .mp3 bị lỗi nên tôi đóng lại ae muốn làm nghiên cứu thêm nha
+                    * Ở đây tôi tạo 1 biến toast thông báo thôi*/
 
-                    HashMap<String, String> myHashRender = new HashMap<>();
-                    myHashRender.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, toSpeak);
-                    Log.d(TAG, "Đang tạo file âm thanh, vui lòng đợi");
-                    //UUID phân loại file ko trùng nhau.
-                    final String music = "appbook_" + UUID.randomUUID().toString() + ".mp3";
-                    File dir = new File(Environment.getExternalStorageDirectory() + "/Download/Appbook/");
-                    dir.mkdirs();
-                    String destFileName = dir + "/" +music;
-                    Log.d(TAG, "onClick: File âm thanh đã tạo"+destFileName);
+                    Toast.makeText(AudioTextToSpeechActivity.this, "Chức nang đang ho", Toast.LENGTH_SHORT).show();
 
-//                    int sr = textToSpeech.synthesizeToFile(toSpeak, myHashRender, destFileName);
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        Log.d(TAG, "onClick: Đọc");
-                        textToSpeech.synthesizeToFile(toSpeak, null, new File(destFileName), music);
-                        Toast.makeText(AudioTextToSpeechActivity.this, "File âm thanh đã lưu tại bộ nhớ điện thoại thư mục Download/AppBook", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        Bundle params = new Bundle();
-                        params.putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, music);
-                        textToSpeech.synthesizeToFile(toSpeak, myHashRender, destFileName);
-
-                        textToSpeech.setOnUtteranceCompletedListener(new TextToSpeech.OnUtteranceCompletedListener() {
-                            @Override
-                            public void onUtteranceCompleted(String s) {
-                                if (s.equals(music)) {
-                                    // start playing the audio file defined at myTestingId.wav
-                                    Log.d(TAG, "onUtteranceCompleted: Thành công"+music);
-                                    Toast.makeText(AudioTextToSpeechActivity.this, "Tệp âm thanh đã lưu thành công", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+//                    String toSpeak = binding.textEt.getText().toString().trim();
+//                    HashMap<String, String> myHashRender = new HashMap<>();
+//                    myHashRender.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, toSpeak);
+//                    Log.d(TAG, "Đang tạo file âm thanh, vui lòng đợi");
+//                    //UUID phân loại file ko trùng nhau.
+//                    final String music = "appbook_" + UUID.randomUUID().toString() + ".mp3";
+//                    File dir = new File(Environment.getExternalStorageDirectory() + "/Download/Appbook/");
+//                    dir.mkdirs();
+//                    String destFileName = dir + "/" +music;
+//                    Log.d(TAG, "onClick: File âm thanh đã tạo"+destFileName);
+//
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                        Log.d(TAG, "onClick: Đọc");
+//                        textToSpeech.synthesizeToFile(toSpeak, null, new File(destFileName), music);
+//                        Toast.makeText(AudioTextToSpeechActivity.this, "File âm thanh đã lưu tại bộ nhớ điện thoại thư mục Download/AppBook", Toast.LENGTH_SHORT).show();
+//                    }
+//                    else {
+//                        Bundle params = new Bundle();
+//                        params.putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, music);
+//                        textToSpeech.synthesizeToFile(toSpeak, myHashRender, destFileName);
+//
+//                        textToSpeech.setOnUtteranceCompletedListener(new TextToSpeech.OnUtteranceCompletedListener() {
+//                            @Override
+//                            public void onUtteranceCompleted(String s) {
+//                                if (s.equals(music)) {
+//                                    // start playing the audio file defined at myTestingId.wav
+//                                    Log.d(TAG, "onUtteranceCompleted: Thành công"+music);
+//                                    Toast.makeText(AudioTextToSpeechActivity.this, "Tệp âm thanh đã lưu thành công", Toast.LENGTH_SHORT).show();
+//                                }
+//                            }
+//                        });
+//                    }
                 }
-            }
             });
     }
 

@@ -104,7 +104,7 @@ public class AdminReportActivity extends AppCompatActivity {
         //db path to load comment
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("ReportBook");
         ref.child(""+id)
-                .addValueEventListener(new ValueEventListener() {
+                .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         //clear array list
@@ -133,7 +133,7 @@ public class AdminReportActivity extends AppCompatActivity {
         //db path to load comment
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("ReportBook");
         ref.orderByChild(uid).equalTo(uidUser)
-                .addValueEventListener(new ValueEventListener() {
+                .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         //clear array list

@@ -93,13 +93,6 @@ public class DashboardUserActivity extends AppCompatActivity {
                 startActivity(new Intent(DashboardUserActivity.this, ProfileActivity.class));
             }
         });
-        //handle click, text_to_speech
-        binding.btnMusic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(DashboardUserActivity.this, MusicActivity.class));
-            }
-        });
 
         //handle click, danh mục sách
         binding.btnDanhmuc.setOnClickListener(new View.OnClickListener() {

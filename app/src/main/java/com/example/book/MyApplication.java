@@ -263,7 +263,7 @@ public class MyApplication extends Application {
         });
     }
 
-    //view
+    //view sách
     public static void incrementBookViewCount(String bookId){
         //1) Get book view count
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Books");
@@ -334,6 +334,8 @@ public class MyApplication extends Application {
                 });
     }
 
+
+    //lỗi chỗ này, khong lưu về được
     private static void saveDownloadedBook(Context context, ProgressDialog progressDialog, byte[] bytes, String nameWithExtension, String bookId) {
         Log.d(TAG_DOWNLOAD, "onSuccess: Lưu sách đã tải xuống");
         try {
@@ -341,6 +343,7 @@ public class MyApplication extends Application {
             downloadsFolder.mkdir();
 
             String filePath = downloadsFolder.getPath() + "/" + nameWithExtension;
+            Log.d(TAG_DOWNLOAD, "saveDownloadedBook: "+filePath);
 
             FileOutputStream outputStream = new FileOutputStream(filePath);
             outputStream.write(bytes);

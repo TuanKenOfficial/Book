@@ -1,5 +1,6 @@
 package com.example.book.Activity;
 
+import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -11,6 +12,7 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -111,13 +113,12 @@ public class PdfDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG_DOWNLOAD, "onClick: Đã kiểm tra quyền");
-                if (ContextCompat.checkSelfPermission(PdfDetailActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     Log.d(TAG_DOWNLOAD, "onClick: Sự cho phép đã được cấp, có thể tải sách");
                     MyApplication.downloadBook(PdfDetailActivity.this, ""+bookId,""+bookTitle,""+bookUrl);
-                }
-                else {
-                    Log.d(TAG_DOWNLOAD, "onClick: Chưa cấp quyền, vui lòng liên hệ admin để được cấp quyền");
-                    requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                } else {
+                    Log.d(TAG_DOWNLOAD, "onClick: Chưa cấp quyền, vui lòng liên hệ admin để được cấp quyền" +Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                    requestStoragePemissions.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
                 }
             }
         });
@@ -267,18 +268,30 @@ public class PdfDetailActivity extends AppCompatActivity {
 
 
     //request storage permission
-    private ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult
-            (new ActivityResultContracts.RequestPermission(), isGranted ->{
-                if (isGranted){
-                    Log.d(TAG_DOWNLOAD, "Đã được cho phép");
-                    MyApplication.downloadBook(this, ""+bookId, ""+bookTitle, ""+bookUrl);
-                    Toast.makeText(this, "Đã được cho phép", Toast.LENGTH_SHORT).show();
+    private ActivityResultLauncher<String> requestStoragePemissions = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            new ActivityResultCallback<Boolean>() {
+                @Override
+                public void onActivityResult(Boolean isGranted) {
+                    if (isGranted) {
+                        Log.d(TAG_DOWNLOAD, "Đã được cho phép");
+                        MyApplication.downloadBook(PdfDetailActivity.this, ""+bookId, ""+bookTitle, ""+bookUrl);
+                        Toast.makeText(PdfDetailActivity.this, "Đã được cho phép", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.d(TAG_DOWNLOAD, "Không cho phép");
+                        Toast.makeText(PdfDetailActivity.this, "Không cho phép", Toast.LENGTH_SHORT).show();                    }
                 }
-                else {
-                    Log.d(TAG_DOWNLOAD, "Không cho phép");
-                    Toast.makeText(this, "Không cho phép", Toast.LENGTH_SHORT).show();
-                }
-            });
+            }
+    );
+//    private ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult
+//            (new ActivityResultContracts.RequestPermission(), isGranted ->{
+//                if (isGranted){
+//
+//                }
+//                else {
+//
+//                }
+//            });
 
     private void loadBookDetails() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Books");

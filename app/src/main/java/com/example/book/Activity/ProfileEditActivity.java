@@ -1,13 +1,19 @@
 package com.example.book.Activity;
 
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
@@ -15,10 +21,13 @@ import android.content.Intent;
 
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -43,7 +52,7 @@ import com.squareup.picasso.Picasso;
 
 
 import java.util.HashMap;
-
+import java.util.Map;
 
 
 public class ProfileEditActivity extends AppCompatActivity {
@@ -112,7 +121,7 @@ public class ProfileEditActivity extends AppCompatActivity {
         binding.profileTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showImagePickDialog();// dành cho compileSdk 32 trở xuống, trong build.gradle
+               imageDialog();// dành cho compileSdk 32 trở xuống, trong build.gradle
 //                imageDialog();// dành cho compileSdk 33, trong build.gradle
             }
         });
@@ -147,102 +156,141 @@ public class ProfileEditActivity extends AppCompatActivity {
         * Mình đã ghi chú thật kĩ các bạn đọc kĩ dùm mình nhá
 
     */
-    private void showImagePickDialog() {
-        //options to display in dialog
-        String[] options = {"Camera", "Gallery"};
-        //dialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Pick Image")
-                .setItems(options, (dialog, which) -> {
-                    //handle clicks
-                    if (which == 0) {
-                        //camera clicked
-                        if (checkCameraPermission()) {
-                            //camera permissions allowed
-                            pickFromCamera();
-                        } else {
-                            //not allowed, request
-                            requestCameraPermission();
-                        }
-                    } else {
-                        //gallery clicked
-                        if (checkStoragePermission()) {
-                            //storage permissions allowed
-                            pickFromGallery();
-                        } else {
-                            //not allowed, request
-                            requestStoragePermission();
-                        }
-                    }
-                })
-                .show();
 
+    private void imageDialog() {
+        PopupMenu popupMenu = new PopupMenu(ProfileEditActivity.this, binding.profileTv);
+        popupMenu.getMenu().add(Menu.NONE, 1, 1, "Camera");
+        popupMenu.getMenu().add(Menu.NONE, 2, 2, "Gallery");
+
+        popupMenu.show();
+
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int itemId = item.getItemId();
+                if (itemId == 1) {
+                    Log.d(TAG, "onMenuItemClick: Mở camera, check camera");
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        Log.d(TAG, "onMenuItemClick: Mở camera, check camera"+Manifest.permission.CAMERA);
+                        requestCameraPemissions.launch(new String[]{Manifest.permission.CAMERA});
+                    } else {
+                        Log.d(TAG, "onMenuItemClick: Mở camera, check camera"+Manifest.permission.CAMERA +Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                        requestCameraPemissions.launch(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE});
+                    }
+                } else if (itemId == 2) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        Log.d(TAG, "onMenuItemClick: Mở storage, check storage");
+                        pickFromGallery();
+                    } else {
+                        Log.d(TAG, "onMenuItemClick: Mở storage, check storage" +Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                        requestStoragePemissions.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                    }
+                }
+                return false;
+            }
+        });
     }
 
-    //mở thư viện ảnh
+    private ActivityResultLauncher<String[]> requestCameraPemissions = registerForActivityResult(
+            new ActivityResultContracts.RequestMultiplePermissions(),
+            new ActivityResultCallback<Map<String, Boolean>>() {
+
+                @Override
+                public void onActivityResult(Map<String, Boolean> result) {
+                    Log.d(TAG, "onActivityResult: " + result.toString());
+                    boolean areAllGranted = true;
+                    for (Boolean isGranted : result.values()) {
+                        areAllGranted = areAllGranted && isGranted;
+                    }
+                    if (areAllGranted) {
+                        Log.d(TAG, "onActivityResult: Tất cả quyền camera & storage");
+                        pickFromCamera();
+                    } else {
+                        Log.d(TAG, "onActivityResult: Tất cả hoặc chỉ có một quyền");
+                        Toast.makeText(ProfileEditActivity.this, "Quyền camera hoặc storage", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+    );
+
+    private ActivityResultLauncher<String> requestStoragePemissions = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            new ActivityResultCallback<Boolean>() {
+                @Override
+                public void onActivityResult(Boolean isGranted) {
+                    if (isGranted) {
+                        Log.d(TAG, "onActivityResult: pickFromGallery"+isGranted);
+                        pickFromGallery();
+                    } else {
+                        Toast.makeText(ProfileEditActivity.this, "Quyền Storage chưa cấp quyền", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+    );
+
     private void pickFromGallery() {
+        Log.d(TAG, "pickFromGallery: ");
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
-        startActivityForResult(intent, IMAGE_PICK_GALLERY_CODE);
+        galleryActivityResultLaucher.launch(intent);
     }
 
-    //mở camera
+    private ActivityResultLauncher<Intent> galleryActivityResultLaucher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        image_uri = data.getData();
+                        Log.d(TAG, "onActivityResult: Hình ảnh thư viện: " + image_uri);
+                        try {
+                            Picasso.get().load(image_uri).placeholder(R.drawable.admin).into(binding.profileTv);
+                        } catch (Exception e) {
+                            Log.d(TAG, "onActivityResult: " + e);
+                            Toast.makeText(ProfileEditActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(ProfileEditActivity.this, "Hủy", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+    );
+
+
     private void pickFromCamera() {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MediaStore.Images.Media.TITLE, "Temp_Image Title");
         contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Temp_Image Description");
 
         image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-
+        Log.d(TAG, "pickFromCamera1: "+image_uri);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
-        startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE);
-    }
-    //image profile check quyền thư viện và camera
-    private boolean checkStoragePermission(){
+        cameraActivityResultLaucher.launch(intent);
 
-        return ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-                (PackageManager.PERMISSION_GRANTED);
     }
 
-    private boolean checkCameraPermission(){
-        boolean result = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CAMERA) ==
-                (PackageManager.PERMISSION_GRANTED);
-        boolean result1 = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-                (PackageManager.PERMISSION_GRANTED);
+    private ActivityResultLauncher<Intent> cameraActivityResultLaucher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
 
-        return result && result1;
-    }
-    //image profile quyền thư viện và camare
-    private void requestStoragePermission(){
-        ActivityCompat.requestPermissions(this, storagePermissions, STORAGE_REQUEST_CODE);
-    }
-    private void requestCameraPermission(){
-        ActivityCompat.requestPermissions(this, cameraPermissions, CAMERA_REQUEST_CODE);
-    }
-    //image profile xử lý ảnh
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (resultCode==RESULT_OK){
-
-            if (requestCode == IMAGE_PICK_GALLERY_CODE) {
-
-                //get picked image
-                assert data != null;
-                image_uri = data.getData();
-                //set to imageview
-                binding.profileTv.setImageURI(image_uri);
-            } else if (requestCode == IMAGE_PICK_CAMERA_CODE) {
-                //set to imageview
-                binding.profileTv.setImageURI(image_uri);
+                        try {
+                            Log.d(TAG, "onActivityResult: "+binding.profileTv);
+                            Picasso.get().load(image_uri).placeholder(R.drawable.admin).into(binding.profileTv);
+                        } catch (Exception e) {
+                            Log.d(TAG, "onActivityResult: " + e);
+                            Toast.makeText(ProfileEditActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(ProfileEditActivity.this, "Hủy", Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
-
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
+    );
 
     private void uploadName() {
         name = binding.nameEt.getText().toString().trim();
